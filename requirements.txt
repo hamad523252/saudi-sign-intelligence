@@ -1,0 +1,4 @@
+# On AMD Instinct (ROCm): use the ROCm PyTorch build, e.g. the rocm/pytorch image on AMD Developer Cloud.
+torch>=2.3
+numpy
+onnx
