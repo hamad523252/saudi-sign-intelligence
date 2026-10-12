@@ -10,8 +10,8 @@ Deaf patients in Saudi hospitals often wait for a human sign-language interprete
 ## What it does
 1. The patient signs in front of any laptop/tablet camera.
 2. **MediaPipe** extracts hand + upper-body landmarks **inside the browser** (no video leaves the device).
-3. A small **Transformer** trained on **AMD Instinct GPUs (ROCm)** recognises the sign.
-4. The phrase appears in Arabic + English and is spoken in natural Arabic (**ElevenLabs**; browser voice fallback).
+3. A small **Transformer** (ROCm-ready training script) recognises the sign.
+4. The phrase appears in Arabic + English; several signs are composed into one sentence by an LLM running on **AMD GPUs**, and spoken in natural Arabic (**ElevenLabs**; browser voice fallback).
 5. Staff confirm ✔ or press ✖ to request a human interpreter.
 
 V1 vocabulary: 16 hospital phrases (pain, doctor, nurse, medicine, water, help, toilet, emergency,
@@ -27,8 +27,13 @@ The dataset is recorded by a certified Saudi Sign Language interpreter (signer `
 - Known limits: isolated signs only, small vocabulary, one signer in V1 → signer-independent evaluation is the next step.
 
 ## Where AMD is used
-`train/train.py` trains the recogniser on **AMD Instinct MI300X with ROCm** (ROCm exposes AMD GPUs through
-`torch.cuda`); the script logs the GPU name and ROCm version into `train/report.json` and exports `web/model.onnx`.
+- **AMD Token Factory (LLMs served on AMD GPUs)** — `server/server.py`:
+  - `/api/compose`: the patient's recognised signs (e.g. PAIN + HEAD) → one clear sentence for staff
+    ("أشعر بألم في رأسي" / "I have a headache"), using `Qwen3.8-27B` on AMD. Strict prompt: rephrase only,
+    never add symptoms, diagnoses or advice; falls back to a rule-based join if the API is unavailable.
+  - `/api/simplify`: staff message → very plain Arabic + the matching signs to show the Deaf patient.
+- **ROCm training** — `train/train.py` runs on AMD Instinct GPUs (ROCm exposes them through `torch.cuda`),
+  logs GPU name + ROCm version to `train/report.json` and exports `web/model.onnx`.
 
 ## Run
 ```bash
@@ -37,7 +42,7 @@ python3 server/server.py                      # http://localhost:8000
 # 2) train on AMD Developer Cloud (rocm/pytorch image)
 pip install onnx && python3 train/train.py --epochs 120
 # 3) serve with Arabic voice
-ELEVENLABS_API_KEY=... python3 server/server.py
+AMD_API_KEY=rc-... ELEVENLABS_API_KEY=... python3 server/server.py
 ```
 Pipeline self-test without a camera: `python3 tools/make_synthetic.py && python3 train/train.py --epochs 30`.
 
