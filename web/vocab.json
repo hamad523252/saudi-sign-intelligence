@@ -1,0 +1,18 @@
+[
+ {"id":"PAIN","ar":"أشعر بألم","en":"I am in pain"},
+ {"id":"DOCTOR","ar":"أريد الطبيب","en":"I need the doctor"},
+ {"id":"NURSE","ar":"أريد الممرضة","en":"I need the nurse"},
+ {"id":"MEDICINE","ar":"الدواء","en":"Medicine"},
+ {"id":"WATER","ar":"أريد ماء","en":"I want water"},
+ {"id":"HELP","ar":"ساعدني من فضلك","en":"Please help me"},
+ {"id":"TOILET","ar":"أريد دورة المياه","en":"I need the toilet"},
+ {"id":"EMERGENCY","ar":"حالة طارئة","en":"Emergency"},
+ {"id":"HEAD","ar":"رأسي","en":"My head"},
+ {"id":"STOMACH","ar":"بطني","en":"My stomach"},
+ {"id":"DIZZY","ar":"أشعر بدوخة","en":"I feel dizzy"},
+ {"id":"ALLERGY","ar":"عندي حساسية","en":"I have an allergy"},
+ {"id":"FAMILY","ar":"أريد أهلي","en":"I want my family"},
+ {"id":"YES","ar":"نعم","en":"Yes"},
+ {"id":"NO","ar":"لا","en":"No"},
+ {"id":"THANKS","ar":"شكرًا","en":"Thank you"}
+]

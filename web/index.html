@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saudi Sign Intelligence</title>
+<style>
+:root{--bg:#0b1f22;--card:#11292d;--line:#1f3d42;--tx:#eef5f5;--mut:#9fb7b9;--gold:#c9a24b;--ok:#3fbf7f;--bad:#e05d5d}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--tx)}
+header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header h1{font-size:20px;margin:0}header span{color:var(--mut);font-size:13px}
+main{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;padding:16px;max-width:1200px;margin:auto}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.stage{position:relative;aspect-ratio:4/3;background:#000;border-radius:12px;overflow:hidden}
+video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.tabs{display:flex;gap:6px;margin-bottom:12px}.tabs button{flex:1}
+button{background:#1c4148;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:15px;cursor:pointer}
+button.on,button.pri{background:var(--gold);color:#1a1a1a;border-color:var(--gold);font-weight:600}
+button:disabled{opacity:.5;cursor:default}
+.out{font-size:34px;font-weight:700;min-height:48px}.en{color:var(--mut);font-size:16px;min-height:22px}
+.bar{height:8px;background:#0a1a1c;border-radius:6px;overflow:hidden;margin:10px 0}.bar i{display:block;height:100%;width:0;background:var(--ok)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+select,input{background:#0a1a1c;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:9px;font-size:15px}
+.hist{max-height:180px;overflow:auto;font-size:14px;color:var(--mut)}.hist div{padding:4px 0;border-bottom:1px solid var(--line)}
+.note{font-size:12px;color:var(--mut);line-height:1.6;margin-top:10px}
+.status{font-size:13px;color:var(--mut)}.badge{position:absolute;top:10px;right:10px;background:#000a;padding:4px 10px;border-radius:20px;font-size:13px;transform:none}
+.counts{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;font-size:13px}
+.counts div{background:#0a1a1c;border-radius:8px;padding:6px 8px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>🤟 Saudi Sign Intelligence</h1>
+  <span>مترجم لغة الإشارة السعودية للمرضى الصم في المستشفيات — Sign → Arabic text & speech</span>
+</header>
+<main>
+  <section class="card">
+    <div class="stage">
+      <video id="vid" playsinline muted></video>
+      <canvas id="cv"></canvas>
+      <div class="badge" id="badge">…</div>
+    </div>
+    <div class="row"><button class="pri" id="start">تشغيل الكاميرا</button><span class="status" id="status">جاهز</span></div>
+  </section>
+
+  <section class="card">
+    <div class="tabs"><button class="on" data-tab="rec">الترجمة</button><button data-tab="data">تسجيل البيانات</button></div>
+
+    <div id="tab-rec">
+      <div class="out" id="out">—</div>
+      <div class="en" id="outEn"></div>
+      <div class="bar"><i id="conf"></i></div>
+      <div class="row">
+        <label><input type="checkbox" id="auto" checked> ترجمة تلقائية</label>
+        <label><input type="checkbox" id="speak" checked> نطق صوتي</label>
+        <button id="now">ترجم الآن</button>
+      </div>
+      <div class="row">
+        <button id="ok">✔ صحيح</button><button id="bad">✖ خطأ — اطلب مترجمًا</button>
+      </div>
+      <div class="hist" id="hist"></div>
+      <p class="note">أداة تواصل مساعدة وليست جهازًا طبيًا ولا تشخيصًا. تظهر نسبة الثقة دائمًا، ولا تُنطق الترجمة إذا قلّت الثقة عن الحد، ويؤكدها الطاقم الطبي أو يطلب مترجمًا بشريًا. تُستخرج معالم اليدين داخل المتصفح ولا يُرسل الفيديو إلى أي خادم.</p>
+    </div>
+
+    <div id="tab-data" class="hidden">
+      <div class="row"><input id="signer" value="H001" size="6" title="رمز المؤدي"><select id="sign"></select></div>
+      <div class="row"><button class="pri" id="recBtn">سجّل 10 عينات</button><button id="export">تصدير JSON</button></div>
+      <div class="status" id="recStatus">كل عينة ثانيتان، بينها ثانية استراحة. أنزل يديك بين العينات.</div>
+      <div class="counts" id="counts"></div>
+    </div>
+  </section>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>
