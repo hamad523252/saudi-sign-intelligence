@@ -60,6 +60,11 @@ select,input{background:#0a1a1c;color:var(--tx);border:1px solid var(--line);bor
       <div class="row">
         <button id="ok">✔ صحيح</button><button id="bad">✖ خطأ — اطلب مترجمًا</button>
       </div>
+      <div class="row"><b>جملة المريض:</b> <span id="tray" class="status">—</span></div>
+      <div class="row"><button class="pri" id="compose">صياغة جملة للطبيب (AMD)</button><button id="clearTray">مسح</button></div>
+      <div class="out" id="sentAr" style="font-size:22px"></div><div class="en" id="sentEn"></div>
+      <div class="row" style="margin-top:12px"><input id="staff" placeholder="رسالة الطبيب/الممرضة للمريض…" style="flex:1"><button id="simplify">تبسيط للمريض</button></div>
+      <div class="out" id="simpleAr" style="font-size:22px"></div><div class="en" id="simpleSigns"></div>
       <div class="hist" id="hist"></div>
       <p class="note">أداة تواصل مساعدة وليست جهازًا طبيًا ولا تشخيصًا. تظهر نسبة الثقة دائمًا، ولا تُنطق الترجمة إذا قلّت الثقة عن الحد، ويؤكدها الطاقم الطبي أو يطلب مترجمًا بشريًا. تُستخرج معالم اليدين داخل المتصفح ولا يُرسل الفيديو إلى أي خادم.</p>
     </div>

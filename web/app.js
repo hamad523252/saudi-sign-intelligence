@@ -7,7 +7,7 @@ const MIN_CONF = 0.75;          // below this we never speak — ask for a human
 const FPS_WINDOW = 60;          // ~2 s buffer
 
 let hands, pose, session, labels = [], vocab = {}, running = false;
-let buffer = [], active = [], quietFrames = 0, recording = null, dataset = { signer: "H001", samples: [] };
+let tray = [], buffer = [], active = [], quietFrames = 0, recording = null, dataset = { signer: "H001", samples: [] };
 
 // ---------- vocabulary ----------
 const vocabList = await fetch("vocab.json").then(r => r.json()).catch(() => []);
@@ -51,6 +51,7 @@ async function show(res) {
   const h = document.createElement("div");
   h.textContent = `${new Date().toLocaleTimeString("ar-SA")} — ${v.ar} (${Math.round(res.p * 100)}%)`;
   $("hist").prepend(h);
+  tray.push(res.id); $("tray").textContent = tray.map(i => (vocab[i] || {}).ar || i).join(" ← ");
   if ($("speak").checked) speak(v.ar);
 }
 
@@ -148,5 +149,18 @@ $("now").onclick = async () => show(await classify(buffer));
 $("ok").onclick = () => { $("hist").prepend(Object.assign(document.createElement("div"), { textContent: "✔ أكّد الطاقم الترجمة" })); };
 $("bad").onclick = () => { $("out").textContent = "يُرجى استدعاء مترجم لغة إشارة"; $("outEn").textContent = "Please call a sign-language interpreter"; speak("يُرجى استدعاء مترجم لغة إشارة"); };
 $("recBtn").onclick = recordBatch;
+$("clearTray").onclick = () => { tray = []; $("tray").textContent = "—"; $("sentAr").textContent = ""; $("sentEn").textContent = ""; };
+$("compose").onclick = async () => {
+  if (!tray.length) return;
+  const r = await (await fetch("/api/compose", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ signs: tray }) })).json();
+  $("sentAr").textContent = r.ar || ""; $("sentEn").textContent = `${r.en || ""} · ${r.source || ""}`;
+  if (r.ar && $("speak").checked) speak(r.ar);
+};
+$("simplify").onclick = async () => {
+  const text = $("staff").value.trim(); if (!text) return;
+  const r = await (await fetch("/api/simplify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) })).json();
+  $("simpleAr").textContent = r.ar || text;
+  $("simpleSigns").textContent = (r.signs || []).map(i => (vocab[i] || {}).ar || i).join(" · ") + (r.source ? ` · ${r.source}` : "");
+};
 $("export").onclick = exportData;
 loadModel();
